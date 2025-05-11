@@ -19,7 +19,7 @@ const App = () => {
   const handleNext = () => {
     if (messageIdx < messages.length - 1) {
       setMessageIdx((msgIdx) => msgIdx + 1);
-      // setMessageIdx((msgIdx) => msgIdx + 1);
+      setMessageIdx((msgIdx) => msgIdx + 1);
     }
   };
 
@@ -44,27 +44,22 @@ const App = () => {
           <Message messageIdx={messageIdx} />
 
           <div className="buttons">
-            <Button bgColor="#7950f2" textColor="#fff" onClick={handlePrevious}>
-              👈🏻 Previous
-            </Button>
-            <Button bgColor="#7950f2" textColor="#fff" onClick={handleNext}>
-              Next 👉🏻
-            </Button>
+            <button
+              style={{ backgroundColor: "#7950f2", color: "#fff" }}
+              onClick={handlePrevious}
+            >
+              Previous
+            </button>
+            <button
+              style={{ backgroundColor: "#7950f2", color: "#fff" }}
+              onClick={handleNext}
+            >
+              Next
+            </button>
           </div>
         </div>
       )}
     </>
-  );
-};
-
-const Button = ({ bgColor, textColor, onClick, children }) => {
-  return (
-    <button
-      style={{ backgroundColor: bgColor, color: textColor }}
-      onClick={onClick}
-    >
-      {children}
-    </button>
   );
 };
 
