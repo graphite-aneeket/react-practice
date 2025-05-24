@@ -1,5 +1,8 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import StarRating from "./StarRating";
+import { useMovies } from "./useMovies";
+import { useLocalStorage } from "./useLocalStorage";
+import { useKey } from "./useKey";
 
 const average = (arr) =>
   arr.reduce((acc, cur, i, arr) => acc + cur / arr.length, 0);
@@ -14,6 +17,21 @@ const Logo = () => {
 };
 
 const Search = ({ query, setQuery }) => {
+  const inputEl = useRef(null);
+
+  const callback = (e) => {
+    if (document.activeElement === inputEl.current) {
+      return;
+    }
+
+    if (e.code === "Enter") {
+      inputEl.current.focus();
+      setQuery("");
+    }
+  };
+
+  useKey(callback);
+
   return (
     <input
       className="search"
@@ -21,6 +39,7 @@ const Search = ({ query, setQuery }) => {
       placeholder="Search movies..."
       value={query}
       onChange={(e) => setQuery(e.target.value)}
+      ref={inputEl}
     />
   );
 };
@@ -150,8 +169,8 @@ const Summary = ({ watched }) => {
 };
 
 const Main = ({ movies, isLoading, errMsg }) => {
-  const [watched, setWatched] = useState([]);
   const [movieId, setMovieId] = useState(null);
+  const [watched, setWatched] = useLocalStorage([], "watched");
 
   return (
     <main className="main">
@@ -192,6 +211,16 @@ const MovieDetails = ({ movieId, setMovieId, setWatched, watched }) => {
     ?.filter((mov) => mov.imdbID === movieId)
     .at(0);
 
+  const userSelectedRatingCount = useRef(0);
+
+  const callback = (e) => {
+    if (e.code === "Escape") {
+      setMovieId(null);
+    }
+  };
+
+  useKey(callback);
+
   const {
     Title: title,
     Year: year,
@@ -215,7 +244,6 @@ const MovieDetails = ({ movieId, setMovieId, setWatched, watched }) => {
         );
         const data = await res.json();
         if (res && res.ok) {
-          // console.log(data);
           setMovie(data);
         }
       } catch (err) {
@@ -233,23 +261,14 @@ const MovieDetails = ({ movieId, setMovieId, setWatched, watched }) => {
 
     return () => {
       document.title = "usePopcorn";
-      // console.log("Cleanup function for movie " + title);
     };
   }, [title]);
 
   useEffect(() => {
-    const callback = (e) => {
-      if (e.code === "Escape") {
-        setMovieId(null);
-      }
-    };
-
-    document.addEventListener("keydown", callback);
-
-    return () => {
-      document.removeEventListener("keydown", callback);
-    };
-  }, [setMovieId]);
+    if (rating > 0) {
+      userSelectedRatingCount.current++;
+    }
+  }, [rating]);
 
   const handleGoBack = () => {
     setMovieId(null);
@@ -264,8 +283,8 @@ const MovieDetails = ({ movieId, setMovieId, setWatched, watched }) => {
       poster,
       runtime: Number(runtime.split(" ")[0]),
       userRating: rating,
+      userSelectedRatingCount: userSelectedRatingCount.current,
     };
-    // console.log(newWatchedMovie);
     setWatched([...watched, newWatchedMovie]);
     handleGoBack();
   };
@@ -334,52 +353,7 @@ const apiKey = "635ffc0d";
 
 export default function App() {
   const [query, setQuery] = useState("");
-  const [movies, setMovies] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
-  const [errMsg, setErrMsg] = useState("");
-
-  useEffect(() => {
-    const controller = new AbortController();
-    const debounceDelay = 400; // milliseconds
-
-    if (query.length < 3) {
-      setMovies([]);
-      setErrMsg("");
-      return;
-    }
-
-    const timeout = setTimeout(() => {
-      const getMovieData = async () => {
-        try {
-          setIsLoading(true);
-          setMovies([]);
-          setErrMsg("");
-
-          const res = await fetch(
-            `http://www.omdbapi.com/?s=${query}&apikey=${apiKey}`,
-            { signal: controller.signal }
-          );
-          const data = await res.json();
-          if (data.Response === "False") {
-            throw new Error(data.Error);
-          }
-          setMovies(data?.Search);
-        } catch (err) {
-          if (err.name !== "AbortError") {
-            setErrMsg(err.message);
-          }
-        } finally {
-          setIsLoading(false);
-        }
-      };
-      getMovieData();
-    }, debounceDelay);
-
-    return () => {
-      clearTimeout(timeout);
-      controller.abort();
-    };
-  }, [query]);
+  const { movies, isLoading, errMsg } = useMovies(query);
 
   return (
     <>
