@@ -1,0 +1,52 @@
+{
+  "cities": [
+    {
+      "cityName": "Delhi",
+      "country": "India",
+      "emoji": "🇮🇳",
+      "date": "2025-06-10T17:51:10.059Z",
+      "notes": "I live here",
+      "position": {
+        "lat": "28.545925723233477",
+        "lng": "77.22290039062501"
+      },
+      "id": 98443198
+    },
+    {
+      "cityName": "Simpson",
+      "country": "Australia",
+      "emoji": "🇦🇺",
+      "date": "2025-06-11T14:54:32.577Z",
+      "notes": "",
+      "position": {
+        "lat": "-24.5271348225978",
+        "lng": "136.40625000000003"
+      },
+      "id": 98443201
+    },
+    {
+      "cityName": "Laung Tuhup",
+      "country": "Indonesia",
+      "emoji": "🇮🇩",
+      "date": "2025-06-11T14:54:41.678Z",
+      "notes": "",
+      "position": {
+        "lat": "-0.5273363048115043",
+        "lng": "114.78515625000001"
+      },
+      "id": 98443202
+    },
+    {
+      "cityName": "Novo Alegre",
+      "country": "Brazil",
+      "emoji": "🇧🇷",
+      "date": "2025-06-11T14:55:15.577Z",
+      "notes": "",
+      "position": {
+        "lat": "-12.897489183755892",
+        "lng": "-46.58203125000001"
+      },
+      "id": 98443203
+    }
+  ]
+}
