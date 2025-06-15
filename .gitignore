@@ -1,3 +1,5 @@
 .DS_Store
 /node_modules
 /how-react-works/node_modules
+/workout-timer/node_modules
+/atomic-blog/node_modules
